@@ -27,7 +27,7 @@
     <canvas id="unity-canvas" width=540 height=960 tabindex="-1"></canvas>
     <div id="loading"><div>Đang tải…</div><div id="bar"><div id="fill"></div></div></div>
     <a id="back" href="https://poke5121999-art.github.io/survivor-web-hub/index.html">← Hub</a>
-    <script src="Build/f7c38662fbd1d96dc4fda1231d1bce98.loader.js"></script>
+    <script src="Build/7d8a6fcc1b637567eaa969680b63aed4.loader.js"></script>
     <script>
       const fill = (p) => { document.getElementById("fill").style.width = (100 * p) + "%"; };
       // GitHub Pages refuses files over 100 MB, so tools/split_data.py may cut the data file into parts
@@ -35,7 +35,7 @@
       // decompresses it like the original file.
       async function dataUrl() {
         const listing = await fetch("Build/parts.json", { cache: "no-cache" });
-        if (!listing.ok) return "Build/f515408e769556d3b90fd8721afe04a5.data.unityweb";
+        if (!listing.ok) return "Build/13b4c455eb1834f6c09c6bfd02bc24a6.data.unityweb";
         const { data, size } = await listing.json();
         const chunks = [];
         let got = 0;
@@ -57,7 +57,7 @@
         arguments: [],
         dataUrl: url,
         frameworkUrl: "Build/915034b65ee3995d04d78814f0417cf0.framework.js.unityweb",
-        codeUrl: "Build/feff8dce93018c61da252d30b29fa668.wasm.unityweb",
+        codeUrl: "Build/09d4cab3b2c5158d6d7d1f599a9f8086.wasm.unityweb",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "Kiseki Games",
         productName: "My Mini Mart",
