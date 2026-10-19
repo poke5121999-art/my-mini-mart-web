@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
+    <link rel="icon" href="https://poke5121999-art.github.io/survivor-web-hub/assets/favicon.svg">
+    <title>My Mini Mart</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #1d2a1a; overflow: hidden; }
+      body { display: flex; align-items: center; justify-content: center; font-family: system-ui, sans-serif; }
+      /* The game's UI is authored against a 1080x1920 portrait canvas, so the canvas is the largest
+         box of the project's own web aspect (WIDTH:HEIGHT) that fits the window. */
+      #unity-canvas {
+        width: min(100vw, calc(100vh * 540 / 960));
+        height: min(100vh, calc(100vw * 960 / 540));
+        background: #000; display: block; touch-action: none;
+      }
+      #loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center;
+        justify-content: center; gap: 12px; color: #e8f5d8; pointer-events: none; }
+      #bar { width: 220px; height: 8px; border-radius: 4px; background: #ffffff22; overflow: hidden; }
+      #fill { width: 0; height: 100%; background: #8bd450; transition: width .2s; }
+      #back { position: fixed; left: 10px; top: 10px; padding: 6px 10px; border-radius: 6px;
+        background: #0008; color: #fff; text-decoration: none; font-size: 14px; }
+    </style>
+  </head>
+  <body>
+    <canvas id="unity-canvas" width=540 height=960 tabindex="-1"></canvas>
+    <div id="loading"><div>Đang tải…</div><div id="bar"><div id="fill"></div></div></div>
+    <a id="back" href="https://poke5121999-art.github.io/survivor-web-hub/index.html">← Hub</a>
+    <script src="Build/casual-farm.loader.js"></script>
+    <script>
+      const fill = (p) => { document.getElementById("fill").style.width = (100 * p) + "%"; };
+      // GitHub Pages refuses files over 100 MB, so tools/split_data.py may cut the data file into parts
+      // listed in Build/parts.json. They are joined back into one blob here; Unity's gzip fallback
+      // decompresses it like the original file.
+      async function dataUrl() {
+        const listing = await fetch("Build/parts.json");
+        if (!listing.ok) return "Build/casual-farm.data.unityweb";
+        const { data, size } = await listing.json();
+        const chunks = [];
+        let got = 0;
+        for (const name of data) {
+          const res = await fetch("Build/" + name);
+          if (!res.ok) throw new Error(name + ": HTTP " + res.status);
+          const reader = res.body.getReader();
+          for (;;) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            got += value.length;
+            fill(0.5 * got / size);
+          }
+        }
+        return URL.createObjectURL(new Blob(chunks));
+      }
+      dataUrl().then((url) => createUnityInstance(document.querySelector("#unity-canvas"), {
+        arguments: [],
+        dataUrl: url,
+        frameworkUrl: "Build/casual-farm.framework.js.unityweb",
+        codeUrl: "Build/casual-farm.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Kiseki Games",
+        productName: "My Mini Mart",
+        productVersion: "1.89.5",
+      }, (p) => fill(0.5 + 0.5 * p)))
+      .then((unityInstance) => {
+        window.unityInstance = unityInstance;
+        document.getElementById("loading").remove();
+      }).catch((message) => { alert(message); });
+    </script>
+  </body>
+</html>
