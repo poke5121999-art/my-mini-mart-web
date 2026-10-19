@@ -35,7 +35,7 @@
       // decompresses it like the original file.
       async function dataUrl() {
         const listing = await fetch("Build/parts.json", { cache: "no-cache" });
-        if (!listing.ok) return "Build/13b4c455eb1834f6c09c6bfd02bc24a6.data.unityweb";
+        if (!listing.ok) return "Build/28843931bf4ae208cfda001b5bf52b6b.data.unityweb";
         const { data, size } = await listing.json();
         const chunks = [];
         let got = 0;
